@@ -75,6 +75,13 @@
         command: "mv /opt/prometheus-{{ prometheus_version }}.linux-amd64 /opt/prometheus"
       when: stat_result.stat.exists == False
 
+- name: Install Consul
+  block:
+    unarchive:
+      src: "{{ consul_download_url }}"
+      dest: /opt/
+      remote_src: yes
+
 - name: Template out the service file for prometheus
   template:
     src: "{{ role_path }}/files/prometheus.service.j2"
@@ -82,6 +89,15 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Template out the service file for consul
+  template:
+    src: "{{ role_path }}/files/consul.service.j2"
+    dest: "/etc/systemd/system/consul.service"
+    owner: root
+    group: root
+    mode: 0644
+
 
 - name: Start service prometheus
   systemd:

@@ -22,3 +22,7 @@ grafana_conf_dir: "{{ grafana_root_dir }}/etc"
 grafana_conf_file: "{{ grafana_conf_dir }}/grafana.ini"
 grafana_plugins_dir: "{{ grafana_data_dir }}/plugins"
 grafana_provision_dir: "{{ grafana_conf_dir }}/provisioning"
+
+# Consul version
+consul_version: 1.4.0
+consul_download_url: https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip
