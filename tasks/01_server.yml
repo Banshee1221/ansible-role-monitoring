@@ -77,10 +77,10 @@
 
 - name: Install Consul
   block:
-    unarchive:
-      src: "{{ consul_download_url }}"
-      dest: /opt/
-      remote_src: yes
+    - unarchive:
+        src: "{{ consul_download_url }}"
+        dest: /opt/
+        remote_src: yes
 
 - name: Template out the service file for prometheus
   template:
