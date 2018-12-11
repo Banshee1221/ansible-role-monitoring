@@ -10,7 +10,7 @@ PIDFile=/run/consul/consul.pid
 Restart=on-failure
 ExecStartPre=[ -f "/run/consul/consul.pid" ] && /bin/rm -f /run/consul/consul.pid
 ExecStartPre=/opt/consul validate /opt/consul.d
-ExecStart=/opt/consul agent $OPTIONS -pid-file=/run/consul/consul.pid -config-dir=/opt/consul.d
+ExecStart=/opt/consul agent -server -advertise $(curl http://169.254.169.254/latest/meta-data/public-ipv4) -bootstrap $OPTIONS -pid-file=/run/consul/consul.pid -config-dir=/opt/consul.d -data-dir /tmp/consul
 ExecReload=/bin/kill -s HUP $MAINPID
 KillSignal=SIGINT
 TimeoutStopSec=5

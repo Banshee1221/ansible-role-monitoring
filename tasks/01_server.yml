@@ -98,10 +98,16 @@
     group: root
     mode: 0644
 
-
 - name: Start service prometheus
   systemd:
     name: prometheus
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+- name: Start service consul
+  systemd:
+    name: consul
     state: restarted
     enabled: yes
     daemon_reload: yes
