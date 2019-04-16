@@ -1,4 +1,15 @@
 ---
 
-- include_tasks: 01_server.yml
+- name: Include server vars
+  include_vars: "server.yml"
+
+- block:
+    - include_tasks: prometheus.yml
+      when: enable_prometheus
+
+    - include_tasks: grafana.yml
+      when: enable_prometheus
+
+    - include_tasks: consul.yml
+      when: enable_consul
   when: monitor_server is defined

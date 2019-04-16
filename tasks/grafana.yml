@@ -1,0 +1,52 @@
+---
+
+- name: Ensure Grafana dependencies
+  apt:
+    name: "{{ item }}"
+    state: present  
+  loop:
+    - fonts-dejavu-core
+    - fontconfig-config
+    - libfontconfig
+
+- name: Ensure Grafana software
+  apt:
+    deb: "{{ grafana_download_url }}/grafana_{{ grafana_version }}_{{ grafana_arch_mapping[ansible_architecture] }}.deb"
+
+- name: Template environment file
+  template:
+    src: "{{ role_path }}/files/environment.j2"
+    dest: "/etc/default/grafana-server"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: "Ensure directories"
+  block:
+    - name: "Checking folders"
+      stat:
+        path: "{{item}}"
+      register: folder_stats
+      loop:
+        - "{{ grafana_root_dir }}"
+        - "{{ grafana_log_dir }}"
+        - "{{ grafana_data_dir }}"
+        - "{{ grafana_conf_dir }}"
+        - "{{ grafana_plugins_dir }}"
+        - "{{ grafana_provision_dir }}"
+    - name: "Creating multiple folders without disturbing previous permissions"
+      file:
+        path: "{{item.item}}"
+        state: directory
+        mode: 0755
+        group: grafana
+        owner: grafana
+      when: item.stat.exists == false
+      loop: "{{folder_stats.results}}"
+
+- name: Restart grafana service
+  systemd:
+    name: grafana-server
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

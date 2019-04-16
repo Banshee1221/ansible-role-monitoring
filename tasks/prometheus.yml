@@ -1,0 +1,32 @@
+---
+
+- name: Check that prometheus isn't already installed
+  stat:
+    path: /opt/prometheus/prometheus
+  register: stat_result
+
+- name: Ensure prometheus software
+  block: 
+  - name: Grab Prometheus binary
+    unarchive:
+      src: "{{ prometheus_download_url }}"
+      dest: /opt/
+      remote_src: yes
+  - name: Rename and move prometheus directory
+    command: "mv /opt/prometheus-{{ prometheus_version }}.linux-amd64 /opt/prometheus"
+  when: stat_result.stat.exists == False
+
+- name: Template out the service file for prometheus
+  template:
+    src: "{{ role_path }}/files/prometheus.service.j2"
+    dest: "/etc/systemd/system/prometheus.service"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Restart prometheus service
+  systemd:
+    name: prometheus
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
