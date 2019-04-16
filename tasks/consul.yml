@@ -1,5 +1,10 @@
 ---
 
+- name: Ensure Consul dependencies
+  apt:
+    name: unzip
+    state: present
+    
 - name: Install Consul
   block:
     - unarchive:

@@ -12,4 +12,3 @@
 
     - include_tasks: consul.yml
       when: enable_consul
-  when: monitor_server is defined
